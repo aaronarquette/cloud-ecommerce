@@ -1,0 +1,5 @@
+<nav style="display: flex; align-items: center; background-color: grey;">
+    <h1>Cloud.gg</h1>
+    <%- search ? '<form action="/" method="GET"><input type="text" name="search" placeholder="Search Game"/></form>' : '' %>
+    <a href="<%= loggedIn ? `/profile/${username}` : '/login' %>"><%= loggedIn ? 'Profile' : 'Login' %></a>
+</nav>

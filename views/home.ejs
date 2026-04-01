@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head></head>
+    <body style="margin: 0px">
+        <%- include('partials/navbar') %>
+        <main style="max-width: 1000px; width: 50%; display: flex">
+            <h1 style="width: 100%">Games</h1>
+            <section id="cards" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; padding: 20px;">
+                <% games.forEach(el => { %>
+                    <div class="card" style="outline: solid; max-width: 400px; margin: 20px; text-align: center;">
+                        <img src="<%= el.imageUrl %>" style="width: 100%;"/>
+                        <h1 style="font-size: 20px;"><%= el.title %></h1>
+                        <p><%= el.genre %> | <%= el.age %> | <%= el.education %></p>
+                        <a href="/game/<%= el.id %>/"><button>Show Detail</button></a><a href="/game/<%= el.id %>/buy"><button>Buy</button></a>
+                    </div>
+                <% }); %>
+            </section>
+        </main>
+    </body>
+</html>
