@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="id">
+<head><meta charset="UTF-8"><title>Kelola Game — CloudGG</title></head>
+<body>
+<%- include('navbar') %>
+<style>
+.admin-header { background:var(--bg2); border-bottom:1px solid var(--border); padding:1.75rem 0; }
+.admin-header-inner { display:flex; align-items:center; justify-content:space-between; }
+.admin-title { font-family:var(--font-head); font-size:1.4rem; font-weight:700; }
+.admin-content { padding:2rem 0; }
+
+.g-table-wrap { border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+.g-table { width:100%; border-collapse:collapse; }
+.g-table thead { background:var(--bg2); }
+.g-table th { padding:.85rem 1rem; text-align:left; font-size:.75rem; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); border-bottom:1px solid var(--border); }
+.g-table td { padding:.85rem 1rem; border-bottom:1px solid rgba(42,42,69,.5); vertical-align:middle; font-size:.9rem; }
+.g-table tr:last-child td { border-bottom:none; }
+.g-table tr:hover td { background:rgba(255,255,255,.02); }
+.game-thumb { width:56px; height:36px; object-fit:cover; border-radius:6px; border:1px solid var(--border); }
+.td-actions { display:flex; gap:.4rem; }
+</style>
+
+<div class="admin-header">
+  <div class="container admin-header-inner">
+    <div>
+      <div style="font-size:.75rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;font-family:var(--font-head);margin-bottom:.3rem">Admin / Game</div>
+      <div class="admin-title">Kelola Game</div>
+    </div>
+    <div style="display:flex;gap:.75rem;align-items:center">
+      <a href="/admin/games/add" class="btn-cyan">➕ Tambah Game</a>
+      <a href="/admin" class="btn-ghost">← Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<div class="admin-content">
+  <div class="container">
+
+    <% if (locals.success) { %>
+      <% if (locals.success==='created') { %><div class="g-alert alert-ok">✅ Game berhasil ditambahkan!</div><% } %>
+      <% if (locals.success==='updated') { %><div class="g-alert alert-ok">✅ Game berhasil diupdate!</div><% } %>
+      <% if (locals.success==='deleted') { %><div class="g-alert alert-err">🗑️ Game berhasil dihapus.</div><% } %>
+    <% } %>
+
+    <div class="g-table-wrap">
+      <table class="g-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Thumbnail</th>
+            <th>Judul</th>
+            <th>Genre</th>
+            <th>Harga</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% games.forEach((game, i) => { %>
+            <tr>
+              <td style="color:var(--muted)"><%= i+1 %></td>
+              <td><img src="<%= game.imageUrl %>" class="game-thumb"
+                onerror="this.src='https://placehold.co/56x36/12121f/444?text=?'"></td>
+              <td style="font-weight:600"><%= game.title %></td>
+              <td><span class="g-badge badge-cyan"><%= game.Genre?.title || '-' %></span></td>
+              <td style="color:var(--yellow);font-weight:600">Rp <%= game.price.toLocaleString('id-ID') %></td>
+              <td>
+                <div class="td-actions">
+                  <a href="/admin/games/<%= game.id %>/edit" class="btn-warning-g btn-sm-g">✏️ Edit</a>
+                  <form method="POST" action="/admin/games/<%= game.id %>/delete">
+                    <button class="btn-danger-g btn-sm-g" onclick="return confirm('Hapus game ini?')">🗑️</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+</body></html>

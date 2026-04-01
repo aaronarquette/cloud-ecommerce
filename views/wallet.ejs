@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="id">
+<head><meta charset="UTF-8"><title>Wallet — CloudGG</title></head>
+<body>
+<%- include('navbar') %>
+<style>
+.wallet-page { min-height:85vh; display:flex; align-items:center; justify-content:center; padding:2rem; }
+.wallet-box { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:2.25rem; width:100%;max-width:480px; box-shadow:0 20px 60px rgba(0,0,0,.5); }
+.wallet-title { font-family:var(--font-head); font-size:1.1rem; letter-spacing:2px; text-align:center; margin-bottom:1.75rem; }
+.balance-display {
+  background: linear-gradient(135deg, rgba(251,191,36,.08), rgba(139,92,246,.08));
+  border:1px solid rgba(251,191,36,.2);
+  border-radius:12px;
+  text-align:center;
+  padding:1.75rem;
+  margin-bottom:1.75rem;
+}
+.balance-label { font-size:.8rem; font-weight:700; letter-spacing:2px; color:var(--muted); text-transform:uppercase; margin-bottom:.5rem; }
+.balance-amount { font-family:var(--font-head); font-size:2rem; font-weight:700; color:var(--yellow); }
+.topup-title { font-size:.8rem; font-weight:700; letter-spacing:2px; color:var(--muted); text-transform:uppercase; margin-bottom:.85rem; }
+.topup-grid { display:grid; grid-template-columns:1fr 1fr; gap:.6rem; margin-bottom:1.25rem; }
+.topup-btn {
+  background:var(--bg2); border:1px solid var(--border); color:var(--text);
+  border-radius:10px; padding:.8rem; cursor:pointer; font-family:var(--font-body);
+  font-weight:600; font-size:.9rem; transition:all .2s;
+}
+.topup-btn:hover { border-color:var(--yellow); color:var(--yellow); background:rgba(251,191,36,.06); box-shadow:0 0 14px rgba(251,191,36,.15); }
+</style>
+
+<div class="wallet-page">
+  <div class="wallet-box">
+    <div class="wallet-title">💰 DOMPET SAYA</div>
+
+    <% if (locals.success) { %>
+      <div class="g-alert alert-ok">✅ Top up berhasil!</div>
+    <% } %>
+
+    <div class="balance-display">
+      <div class="balance-label">Saldo Saat Ini</div>
+      <div class="balance-amount">Rp <%= balance.toLocaleString('id-ID') %></div>
+    </div>
+
+    <div class="topup-title">Pilih Nominal Top Up</div>
+    <form method="POST" action="/wallet/topup">
+      <div class="topup-grid">
+        <% [50000, 100000, 200000, 500000].forEach(amount => { %>
+          <button type="submit" name="amount" value="<%= amount %>" class="topup-btn"
+            onclick="return confirm('Top up Rp <%= amount.toLocaleString('id-ID') %>?')">
+            Rp <%= amount.toLocaleString('id-ID') %>
+          </button>
+        <% }) %>
+      </div>
+    </form>
+
+    <a href="/" class="btn-ghost btn-full" style="text-align:center;margin-top:.5rem">← Kembali ke Toko</a>
+  </div>
+</div>
+</body></html>

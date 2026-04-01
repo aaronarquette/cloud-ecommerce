@@ -1,0 +1,72 @@
+[
+  {
+    "title": "Cyberpunk 2077",
+    "price": 50000,
+    "description": "Open world RPG futuristik di Night City dengan cerita mendalam.",
+    "imageUrl": "https://cdn.akamai.steamstatic.com/steam/apps/1091500/header.jpg",
+    "GenreId": 1
+  },
+  {
+    "title": "Elden Ring",
+    "price": 75000,
+    "description": "Action RPG dunia terbuka dengan gameplay menantang dari FromSoftware.",
+    "imageUrl": "https://cdn.akamai.steamstatic.com/steam/apps/1245620/header.jpg",
+    "GenreId": 2
+  },
+  {
+    "title": "Forza Horizon 5",
+    "price": 30000,
+    "description": "Game balap open world dengan grafis realistis di Meksiko.",
+    "imageUrl": "https://cdn.akamai.steamstatic.com/steam/apps/1551360/header.jpg",
+    "GenreId": 3
+  },
+  {
+    "title": "Hollow Knight",
+    "price": 15000,
+    "description": "Game metroidvania indie dengan dunia gelap dan eksplorasi luas.",
+    "imageUrl": "https://cdn.akamai.steamstatic.com/steam/apps/367520/header.jpg",
+    "GenreId": 4
+  },
+  {
+    "title": "Stardew Valley",
+    "price": 20000,
+    "description": "Simulasi bertani santai dengan banyak aktivitas dan cerita.",
+    "imageUrl": "https://cdn.akamai.steamstatic.com/steam/apps/413150/header.jpg",
+    "GenreId": 5
+  },
+  {
+    "title": "Hades",
+    "price": 25000,
+    "description": "Roguelike action cepat dengan cerita mitologi Yunani.",
+    "imageUrl": "https://cdn.akamai.steamstatic.com/steam/apps/1145360/header.jpg",
+    "GenreId": 6
+  },
+  {
+    "title": "Red Dead Redemption 2",
+    "price": 60000,
+    "description": "Petualangan open world di era koboi dengan cerita emosional.",
+    "imageUrl": "https://cdn.akamai.steamstatic.com/steam/apps/1174180/header.jpg",
+    "GenreId": 7
+  },
+  {
+    "title": "The Witcher 3",
+    "price": 45000,
+    "description": "RPG epik dengan dunia luas dan cerita bercabang.",
+    "imageUrl": "https://cdn.akamai.steamstatic.com/steam/apps/292030/header.jpg",
+    "GenreId": 1
+  },
+  {
+    "title": "Minecraft",
+    "price": 35000,
+    "description": "Game sandbox kreatif untuk membangun dan bertahan hidup.",
+    "imageUrl": "https://cdn.akamai.steamstatic.com/steam/apps/1782210/header.jpg",
+    "GenreId": 9
+  },
+  {
+    "title": "GTA V",
+    "price": 55000,
+    "description": "Open world action dengan cerita kriminal dan mode online.",
+    "imageUrl": "https://cdn.akamai.steamstatic.com/steam/apps/271590/header.jpg",
+    "GenreId": 10
+  }
+]

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="id">
+<head><meta charset="UTF-8"><title>Login — CloudGG</title></head>
+<body>
+<%- include('navbar') %>
+<style>
+.auth-page { min-height:88vh; display:flex; align-items:center; justify-content:center; padding:2rem; position:relative; overflow:hidden; }
+.auth-page::before {
+  content:'';position:absolute;inset:0;
+  background: radial-gradient(ellipse 60% 60% at 30% 40%, rgba(139,92,246,.18), transparent),
+              radial-gradient(ellipse 50% 50% at 70% 70%, rgba(0,212,255,.12), transparent);
+  pointer-events:none;
+}
+.auth-box {
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:2.5rem;
+  width:100%;max-width:420px;
+  position:relative;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+}
+.auth-logo { font-family:var(--font-head); font-size:1.5rem; font-weight:900; text-align:center; margin-bottom:1.75rem; }
+.auth-logo span:first-child { color:var(--cyan); }
+.auth-logo span:last-child { color:var(--purple); }
+.auth-title { text-align:center; font-size:1.1rem; font-weight:600; margin-bottom:1.5rem; color:var(--muted); }
+.form-group { margin-bottom:1.1rem; }
+.divider-text { text-align:center; color:var(--muted); font-size:.88rem; margin-top:1.25rem; }
+.divider-text a { color:var(--cyan); text-decoration:none; font-weight:600; }
+.divider-text a:hover { text-decoration:underline; }
+</style>
+
+<div class="auth-page">
+  <div class="auth-box">
+    <div class="auth-logo"><span>Cloud</span><span>GG</span></div>
+    <p class="auth-title">Masuk ke akunmu</p>
+
+    <% if (error) { %>
+      <div class="g-alert alert-err"><%= error %></div>
+    <% } %>
+
+    <form method="POST" action="/login">
+      <div class="form-group">
+        <label class="g-label">Email</label>
+        <input type="email" name="email" class="g-input" placeholder="kamu@email.com" required>
+      </div>
+      <div class="form-group">
+        <label class="g-label">Password</label>
+        <input type="password" name="password" class="g-input" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="btn-cyan btn-full" style="margin-top:.5rem;font-size:1rem;padding:.7rem">
+        Masuk →
+      </button>
+    </form>
+
+    <p class="divider-text">Belum punya akun? <a href="/register">Daftar sekarang</a></p>
+  </div>
+</div>
+</body></html>

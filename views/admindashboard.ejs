@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="id">
+<head><meta charset="UTF-8"><title>Admin Dashboard — CloudGG</title></head>
+<body>
+<%- include('navbar') %>
+<style>
+.admin-header { background:var(--bg2); border-bottom:1px solid var(--border); padding:1.75rem 0; }
+.admin-header-inner { display:flex; align-items:center; justify-content:space-between; }
+.admin-tag { font-family:var(--font-head); font-size:.75rem; letter-spacing:3px; color:var(--yellow); text-transform:uppercase; margin-bottom:.4rem; }
+.admin-title { font-family:var(--font-head); font-size:1.6rem; font-weight:700; }
+.admin-content { padding:2.5rem 0; }
+
+.stat-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:1rem; margin-bottom:2.5rem; }
+.stat-card {
+  border-radius:12px; padding:1.5rem 1.25rem;
+  border:1px solid;
+  position:relative; overflow:hidden;
+  transition:transform .2s;
+}
+.stat-card:hover { transform:translateY(-3px); }
+.stat-card::before { content:''; position:absolute; top:-30px; right:-20px; width:80px; height:80px; border-radius:50%; opacity:.15; }
+.stat-card-icon { font-size:1.5rem; margin-bottom:.75rem; }
+.stat-card-val { font-family:var(--font-head); font-size:2rem; font-weight:700; line-height:1; }
+.stat-card-label { font-size:.8rem; font-weight:600; letter-spacing:1px; text-transform:uppercase; margin-top:.35rem; opacity:.7; }
+
+.sc-cyan  { background:rgba(0,212,255,.06); border-color:rgba(0,212,255,.2); color:var(--cyan); }
+.sc-cyan::before  { background:var(--cyan); }
+.sc-green { background:rgba(16,185,129,.06); border-color:rgba(16,185,129,.2); color:var(--green); }
+.sc-green::before { background:var(--green); }
+.sc-purple{ background:rgba(139,92,246,.06); border-color:rgba(139,92,246,.2); color:var(--purple); }
+.sc-purple::before{ background:var(--purple); }
+.sc-yellow{ background:rgba(251,191,36,.06); border-color:rgba(251,191,36,.2); color:var(--yellow); }
+.sc-yellow::before{ background:var(--yellow); }
+
+.quick-menu-title { font-family:var(--font-head); font-size:.85rem; letter-spacing:2px; color:var(--muted); text-transform:uppercase; margin-bottom:1rem; }
+.quick-menu { display:flex; gap:.75rem; flex-wrap:wrap; }
+.menu-card {
+  background:var(--card); border:1px solid var(--border); border-radius:12px;
+  padding:1.25rem 1.5rem; text-decoration:none; color:var(--text);
+  display:flex; align-items:center; gap:.75rem; transition:all .2s; min-width:180px;
+}
+.menu-card:hover { border-color:var(--cyan); color:var(--cyan); background:rgba(0,212,255,.04); transform:translateY(-2px); }
+.menu-card-icon { font-size:1.4rem; }
+.menu-card-text { font-weight:600; font-size:.92rem; }
+</style>
+
+<div class="admin-header">
+  <div class="container admin-header-inner">
+    <div>
+      <div class="admin-tag">Panel Kontrol</div>
+      <div class="admin-title">Admin Dashboard</div>
+    </div>
+    <span class="g-badge badge-yellow">⚙️ Admin Mode</span>
+  </div>
+</div>
+
+<div class="admin-content">
+  <div class="container">
+
+    <!-- STAT CARDS -->
+    <div class="stat-grid">
+      <div class="stat-card sc-cyan">
+        <div class="stat-card-icon">🎮</div>
+        <div class="stat-card-val"><%= totalGames %></div>
+        <div class="stat-card-label">Total Game</div>
+      </div>
+      <div class="stat-card sc-green">
+        <div class="stat-card-icon">👥</div>
+        <div class="stat-card-val"><%= totalUsers %></div>
+        <div class="stat-card-label">Total User</div>
+      </div>
+      <div class="stat-card sc-purple">
+        <div class="stat-card-icon">🛒</div>
+        <div class="stat-card-val"><%= totalTransactions %></div>
+        <div class="stat-card-label">Transaksi</div>
+      </div>
+      <div class="stat-card sc-yellow">
+        <div class="stat-card-icon">💰</div>
+        <div class="stat-card-val" style="font-size:1.3rem">Rp <%= (locals.totalRevenue||0).toLocaleString('id-ID') %></div>
+        <div class="stat-card-label">Total Revenue</div>
+      </div>
+    </div>
+
+    <!-- QUICK MENU -->
+    <div class="quick-menu-title">Menu Cepat</div>
+    <div class="quick-menu">
+      <a href="/admin/games" class="menu-card">
+        <span class="menu-card-icon">🎮</span>
+        <span class="menu-card-text">Kelola Game</span>
+      </a>
+      <a href="/admin/games/add" class="menu-card">
+        <span class="menu-card-icon">➕</span>
+        <span class="menu-card-text">Tambah Game</span>
+      </a>
+      <a href="/" class="menu-card">
+        <span class="menu-card-icon">🏪</span>
+        <span class="menu-card-text">Lihat Toko</span>
+      </a>
+    </div>
+
+  </div>
+</div>
+</body></html>
