@@ -1,4 +1,5 @@
 const express = require('express');
+const session = require('express-session')
 const path    = require('path');  // bawaan Node.js, tidak perlu install
 const router  = require('./routes');
 
@@ -63,6 +64,15 @@ app.use((req, res, next) => {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'));
+app.use(session({
+  secret: 'cloud_gg_e_commerce', // A unique string used to sign the session ID cookie
+  resave: false,               // Prevents resaving session if nothing changed
+  saveUninitialized: true,     // Forces a session that is "uninitialized" to be saved to the store
+  cookie: { 
+    secure: false,             // Set to true if using HTTPS
+    maxAge: 6000000            // Cookie expiration in milliseconds (e.g., 1 minute)
+  }
+}));
 
 // ── Template Engine ──
 app.set('view engine', 'ejs');
