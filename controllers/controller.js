@@ -7,7 +7,7 @@ const { User, UserDetail, Game, GameUser, Genre } = require('../models');
 const controller = {
 
   showLogin(req, res) {
-    if (req.session.user) return res.redirect('/');
+    // isGuest middleware sudah handle redirect jika sudah login
     res.render('login', { error: null });
   },
 
@@ -15,18 +15,21 @@ const controller = {
     try {
       const { email, password } = req.body;
 
-      const user = await User.findOne({ where: { email } });
+      // email otomatis lowercase karena setter di model
+      const user = await User.findOne({ where: { email: email.toLowerCase().trim() } });
       if (!user) return res.render('login', { error: 'Email tidak ditemukan' });
 
-      const isValid = bcrypt.compareSync(password, user.password);
+      // ambil raw password dari DB (bukan getter), lalu compare
+      const rawPassword = user.getDataValue('password');
+      const isValid = bcrypt.compareSync(password, rawPassword);
       if (!isValid) return res.render('login', { error: 'Password salah' });
 
       req.session.user = {
         id: user.id,
-        username: user.username,
-        email: user.email,
+        username: user.getDataValue('username'), // raw value untuk session
+        email: user.getDataValue('email'),
         role: user.role,
-        balance: user.balance
+        balance: user.getDataValue('balance')    // raw number untuk kalkulasi
       };
 
       if (user.role === 'admin') return res.redirect('/admin');
@@ -39,7 +42,7 @@ const controller = {
   },
 
   showRegister(req, res) {
-    if (req.session.user) return res.redirect('/');
+    // isGuest middleware sudah handle redirect jika sudah login
     res.render('register', { error: null });
   },
 
@@ -47,15 +50,15 @@ const controller = {
     try {
       const { username, email, password } = req.body;
 
-      const existing = await User.findOne({ where: { email } });
+      const existing = await User.findOne({ where: { email: email.toLowerCase().trim() } });
       if (existing) return res.render('register', { error: 'Email sudah terdaftar' });
 
-      const hashedPassword = bcrypt.hashSync(password, 10);
-
+      // TIDAK perlu bcrypt.hashSync manual lagi
+      // beforeCreate hook di model otomatis hash password
       const newUser = await User.create({
         username,
-        email,
-        password: hashedPassword,
+        email,      // setter model otomatis lowercase
+        password,   // hook model otomatis hash
         role: 'user',
         balance: 0
       });
@@ -75,7 +78,7 @@ const controller = {
   },
 
   handleLogout(req, res) {
-    req.session.destroy(() => res.redirect('/login')); // FIX 6: tambah slash di '/login'
+    req.session.destroy(() => res.redirect('/login'));
   },
 
   // ================= GAMES =================
@@ -96,7 +99,7 @@ const controller = {
 
       const genres = await Genre.findAll();
 
-      res.render('home', { // FIX 3: 'games' → 'home' sesuai nama file home.ejs
+      res.render('home', {
         games,
         genres,
         user: req.session.user || null,
@@ -147,7 +150,7 @@ const controller = {
         userReview,
         avgRating,
         reviews,
-        msg: req.query.msg || null  // FIX: kirim msg dari query string ke view
+        msg: req.query.msg || null
       });
 
     } catch (error) {
@@ -157,9 +160,8 @@ const controller = {
   },
 
   async buyGame(req, res) {
+    // isLoggedIn middleware sudah handle cek session
     try {
-      if (!req.session.user) return res.redirect('/login');
-
       const userId = req.session.user.id;
       const game = await Game.findByPk(req.params.id);
 
@@ -169,11 +171,14 @@ const controller = {
       if (already) return res.redirect(`/games/${game.id}?msg=already_owned`);
 
       const user = await User.findByPk(userId);
-      if (user.balance < game.price) {
+
+      // ambil raw balance (bukan getter string "Rp...")
+      const rawBalance = user.getDataValue('balance');
+      if (rawBalance < game.price) {
         return res.redirect(`/games/${game.id}?msg=insufficient_balance`);
       }
 
-      const newBalance = user.balance - game.price; // FIX 7: hitung dulu sebelum update
+      const newBalance = rawBalance - game.price;
 
       await user.update({ balance: newBalance });
 
@@ -183,7 +188,7 @@ const controller = {
         purchasedAt: new Date()
       });
 
-      req.session.user.balance = newBalance; // FIX 7: pakai newBalance, bukan double-substract
+      req.session.user.balance = newBalance;
 
       res.redirect(`/games/${game.id}?msg=success`);
 
@@ -194,9 +199,8 @@ const controller = {
   },
 
   async rateGame(req, res) {
+    // isLoggedIn middleware sudah handle cek session
     try {
-      if (!req.session.user) return res.redirect('/login');
-
       const { rating, review } = req.body;
 
       const purchase = await GameUser.findOne({
@@ -244,15 +248,15 @@ const controller = {
   },
 
   async showWallet(req, res) {
+    // isLoggedIn middleware sudah handle cek session
     try {
-      if (!req.session.user) return res.redirect('/login');
-
       const user = await User.findByPk(req.session.user.id);
-      req.session.user.balance = user.balance;
+      const rawBalance = user.getDataValue('balance');
+      req.session.user.balance = rawBalance;
 
       res.render('wallet', {
         user: req.session.user,
-        balance: user.balance
+        balance: rawBalance
       });
 
     } catch (error) {
@@ -262,14 +266,14 @@ const controller = {
   },
 
   async topUp(req, res) {
+    // isLoggedIn middleware sudah handle cek session
     try {
-      if (!req.session.user) return res.redirect('/login');
-
       const amount = parseInt(req.body.amount);
       if (!amount || amount <= 0) return res.redirect('/wallet');
 
       const user = await User.findByPk(req.session.user.id);
-      const newBalance = user.balance + amount;
+      const rawBalance = user.getDataValue('balance');
+      const newBalance = rawBalance + amount;
 
       await user.update({ balance: newBalance });
       req.session.user.balance = newBalance;
@@ -283,29 +287,25 @@ const controller = {
   },
 
   // ================= ADMIN =================
+  // isAdmin middleware sudah handle cek session + role di router
 
   async adminDashboard(req, res) {
     try {
-      if (!req.session.user || req.session.user.role !== 'admin') {
-        return res.redirect('/');
-      }
-
       const totalGames = await Game.count();
       const totalUsers = await User.count({ where: { role: 'user' } });
       const totalTransactions = await GameUser.count();
 
-      // FIX 5: hitung totalRevenue yang dipakai di admindashboard.ejs
       const allPurchases = await GameUser.findAll({
         include: [{ model: Game, attributes: ['price'] }]
       });
       const totalRevenue = allPurchases.reduce((sum, gu) => sum + (gu.Game?.price || 0), 0);
 
-      res.render('admindashboard', { // FIX 4: 'admin/dashboard' → 'admindashboard'
+      res.render('admindashboard', {
         user: req.session.user,
         totalGames,
         totalUsers,
         totalTransactions,
-        totalRevenue // FIX 5: kirim totalRevenue ke view
+        totalRevenue
       });
 
     } catch (error) {
@@ -314,14 +314,8 @@ const controller = {
     }
   },
 
-  // FIX 7: tambah method admin CRUD yang hilang
-
   async adminGameList(req, res) {
     try {
-      if (!req.session.user || req.session.user.role !== 'admin') {
-        return res.redirect('/');
-      }
-
       const games = await Game.findAll({
         include: Genre,
         order: [['createdAt', 'DESC']]
@@ -341,10 +335,6 @@ const controller = {
 
   async adminGameForm(req, res) {
     try {
-      if (!req.session.user || req.session.user.role !== 'admin') {
-        return res.redirect('/');
-      }
-
       const genres = await Genre.findAll();
 
       res.render('admingameform', {
@@ -362,10 +352,6 @@ const controller = {
 
   async adminCreateGame(req, res) {
     try {
-      if (!req.session.user || req.session.user.role !== 'admin') {
-        return res.redirect('/');
-      }
-
       const { title, price, description, imageUrl, GenreId } = req.body;
 
       await Game.create({
@@ -392,10 +378,6 @@ const controller = {
 
   async adminEditForm(req, res) {
     try {
-      if (!req.session.user || req.session.user.role !== 'admin') {
-        return res.redirect('/');
-      }
-
       const game = await Game.findByPk(req.params.id, { include: Genre });
       if (!game) return res.redirect('/admin/games');
 
@@ -416,10 +398,6 @@ const controller = {
 
   async adminUpdateGame(req, res) {
     try {
-      if (!req.session.user || req.session.user.role !== 'admin') {
-        return res.redirect('/');
-      }
-
       const { title, price, description, imageUrl, GenreId } = req.body;
       const game = await Game.findByPk(req.params.id);
 
@@ -443,10 +421,6 @@ const controller = {
 
   async adminDeleteGame(req, res) {
     try {
-      if (!req.session.user || req.session.user.role !== 'admin') {
-        return res.redirect('/');
-      }
-
       const game = await Game.findByPk(req.params.id);
       if (game) {
         await GameUser.destroy({ where: { GameId: game.id } });
