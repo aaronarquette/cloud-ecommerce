@@ -1,0 +1,62 @@
+[
+  {
+    "username": "admin",
+    "email": "admin@mail.com",
+    "password": "123456",
+    "role": "admin"
+  },
+  {
+    "username": "rafi",
+    "email": "rafi@mail.com",
+    "password": "123456",
+    "role": "user"
+  },
+  {
+    "username": "budi",
+    "email": "budi@mail.com",
+    "password": "123456",
+    "role": "user"
+  },
+  {
+    "username": "siti",
+    "email": "siti@mail.com",
+    "password": "123456",
+    "role": "user"
+  },
+  {
+    "username": "andika",
+    "email": "andika@mail.com",
+    "password": "123456",
+    "role": "user"
+  },
+  {
+    "username": "dina",
+    "email": "dina@mail.com",
+    "password": "123456",
+    "role": "user"
+  },
+  {
+    "username": "fajar",
+    "email": "fajar@mail.com",
+    "password": "123456",
+    "role": "user"
+  },
+  {
+    "username": "rina",
+    "email": "rina@mail.com",
+    "password": "123456",
+    "role": "user"
+  },
+  {
+    "username": "eko",
+    "email": "eko@mail.com",
+    "password": "123456",
+    "role": "user"
+  },
+  {
+    "username": "dewi",
+    "email": "dewi@mail.com",
+    "password": "123456",
+    "role": "user"
+  }
+]

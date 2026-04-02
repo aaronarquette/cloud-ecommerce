@@ -1,0 +1,52 @@
+[
+  {
+    "description": "Admin utama yang mengelola seluruh sistem dan game di platform.",
+    "imageUrl": "https://randomuser.me/api/portraits/men/1.jpg",
+    "UserId": 1
+  },
+  {
+    "description": "Gamer santai yang suka bermain RPG dan open world.",
+    "imageUrl": "https://randomuser.me/api/portraits/men/2.jpg",
+    "UserId": 2
+  },
+  {
+    "description": "Penggemar game balap dan kompetitif.",
+    "imageUrl": "https://randomuser.me/api/portraits/men/3.jpg",
+    "UserId": 3
+  },
+  {
+    "description": "Suka game story-driven dan simulasi kehidupan.",
+    "imageUrl": "https://randomuser.me/api/portraits/women/1.jpg",
+    "UserId": 4
+  },
+  {
+    "description": "Hardcore gamer yang menyukai tantangan sulit.",
+    "imageUrl": "https://randomuser.me/api/portraits/men/4.jpg",
+    "UserId": 5
+  },
+  {
+    "description": "Casual gamer yang bermain untuk hiburan.",
+    "imageUrl": "https://randomuser.me/api/portraits/women/2.jpg",
+    "UserId": 6
+  },
+  {
+    "description": "Pecinta game indie dan eksplorasi.",
+    "imageUrl": "https://randomuser.me/api/portraits/men/5.jpg",
+    "UserId": 7
+  },
+  {
+    "description": "Suka game strategi dan manajemen.",
+    "imageUrl": "https://randomuser.me/api/portraits/women/3.jpg",
+    "UserId": 8
+  },
+  {
+    "description": "Builder kreatif yang suka sandbox game.",
+    "imageUrl": "https://randomuser.me/api/portraits/men/6.jpg",
+    "UserId": 9
+  },
+  {
+    "description": "Penggemar game open world dan aksi.",
+    "imageUrl": "https://randomuser.me/api/portraits/women/4.jpg",
+    "UserId": 10
+  }
+]

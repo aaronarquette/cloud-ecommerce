@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="id">
+<head><meta charset="UTF-8"><title>Error — CloudGG</title></head>
+<body>
+<%- include('navbar') %>
+<style>
+.error-page { min-height:82vh; display:flex; align-items:center; justify-content:center; text-align:center; position:relative; overflow:hidden; }
+.error-page::before {
+  content:'';position:absolute;inset:0;
+  background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(239,68,68,.08), transparent);
+  pointer-events:none;
+}
+.error-box { position:relative; }
+.error-code { font-family:var(--font-head); font-size:6rem; font-weight:900; color:var(--red); opacity:.3; line-height:1; letter-spacing:4px; }
+.error-icon { font-size:3rem; margin-bottom:1rem; }
+.error-msg { font-size:1.1rem; color:var(--muted); margin:1rem 0 2rem; max-width:400px; line-height:1.6; }
+</style>
+<div class="error-page">
+  <div class="error-box">
+    <div class="error-code">ERR</div>
+    <div class="error-icon">⚠️</div>
+    <h2 style="font-family:var(--font-head);font-size:1.4rem;letter-spacing:1px"><%= message || 'Terjadi Kesalahan' %></h2>
+    <p class="error-msg">Ada yang tidak beres. Coba kembali ke beranda.</p>
+    <a href="/" class="btn-cyan">← Kembali ke Beranda</a>
+  </div>
+</div>
+</body></html>

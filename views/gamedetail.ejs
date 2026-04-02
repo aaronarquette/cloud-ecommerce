@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title><%= game.title %> — CloudGG</title>
+</head>
+<body>
+<%- include('navbar') %>
+
+<style>
+.detail-hero {
+  position:relative;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 2.5rem 0;
+  overflow:hidden;
+}
+.detail-hero::before {
+  content:'';
+  position:absolute; inset:0;
+  background: radial-gradient(ellipse 70% 80% at -10% 50%, rgba(139,92,246,.15), transparent);
+  pointer-events:none;
+}
+.detail-grid { display:grid; grid-template-columns:380px 1fr; gap:2.5rem; align-items:start; position:relative; }
+@media(max-width:768px){ .detail-grid{grid-template-columns:1fr;} }
+.detail-img { width:100%; border-radius:12px; border:1px solid var(--border); object-fit:cover; aspect-ratio:16/9; }
+.detail-genre { margin:.5rem 0; }
+.detail-desc { color:var(--muted); line-height:1.7; margin:1rem 0; font-size:.95rem; }
+.detail-price { font-family:var(--font-head); font-size:1.8rem; font-weight:700; color:var(--yellow); margin:1rem 0; }
+.detail-rating { display:flex; align-items:center; gap:.5rem; margin-bottom:1rem; font-size:.9rem; color:var(--muted); }
+.rating-stars { color:var(--yellow); font-size:1rem; }
+.action-row { display:flex; gap:.75rem; flex-wrap:wrap; margin-top:1.25rem; }
+
+.detail-lower { padding: 2.5rem 0; }
+.review-form-box {
+  background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:1.5rem; margin-bottom:2rem;
+}
+.review-form-title { font-family:var(--font-head); font-size:1rem; letter-spacing:1px; margin-bottom:1.25rem; }
+.star-select { display:flex; gap:.4rem; margin-bottom:1rem; }
+.star-select select { width:140px; }
+.review-list { display:flex; flex-direction:column; gap:.75rem; }
+.review-card {
+  background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:1rem 1.25rem;
+  display:grid; grid-template-columns:1fr auto; gap:.5rem;
+}
+.review-user { font-weight:700; font-size:.9rem; }
+.review-text { color:var(--muted); font-size:.88rem; margin-top:.35rem; grid-column:1/-1; }
+.section-label { font-family:var(--font-head); font-size:.95rem; letter-spacing:1px; color:var(--muted); margin-bottom:1.25rem; text-transform:uppercase; }
+.owned-badge { background:rgba(16,185,129,.1); border:1px solid rgba(16,185,129,.3); color:var(--green); padding:.6rem 1.2rem; border-radius:8px; font-weight:700; display:inline-block; }
+</style>
+
+<% const msg = locals.msg || null; %>
+<% if (msg) { %>
+  <div class="container" style="padding-top:1rem">
+    <% if (msg==='success') { %><div class="g-alert alert-ok">✅ Game berhasil dibeli! Selamat bermain.</div><% } %>
+    <% if (msg==='already_owned') { %><div class="g-alert alert-info">ℹ️ Kamu sudah memiliki game ini.</div><% } %>
+    <% if (msg==='insufficient_balance') { %><div class="g-alert alert-err">❌ Saldo tidak cukup — silakan top up dulu.</div><% } %>
+    <% if (msg==='rated') { %><div class="g-alert alert-ok">⭐ Rating berhasil disimpan!</div><% } %>
+  </div>
+<% } %>
+
+<!-- DETAIL HERO -->
+<div class="detail-hero">
+  <div class="container">
+    <div class="detail-grid">
+      <img src="<%= game.imageUrl %>" class="detail-img" alt="<%= game.title %>"
+        onerror="this.src='https://placehold.co/600x338/12121f/444?text=No+Image'">
+      <div>
+        <h1 style="font-family:var(--font-head);font-size:clamp(1.4rem,3vw,2rem);font-weight:700;letter-spacing:1px"><%= game.title %></h1>
+        <div class="detail-genre">
+          <span class="g-badge badge-cyan"><%= game.Genre?.title || 'Unknown' %></span>
+        </div>
+        <p class="detail-desc"><%= game.description %></p>
+        <div class="detail-price">Rp <%= game.price.toLocaleString('id-ID') %></div>
+
+        <div class="detail-rating">
+          <% if (avgRating) { %>
+            <span class="rating-stars">★★★★★</span>
+            <strong style="color:var(--yellow)"><%= avgRating %>/5</strong>
+            <span>(<%= reviews.length %> ulasan)</span>
+          <% } else { %>
+            <span>Belum ada rating</span>
+          <% } %>
+        </div>
+
+        <!-- ADMIN CONTROLS -->
+        <% if (user?.role === 'admin') { %>
+          <div class="action-row">
+            <a href="/admin/games/<%= game.id %>/edit" class="btn-warning-g">✏️ Edit Game</a>
+            <form method="POST" action="/admin/games/<%= game.id %>/delete" style="display:inline">
+              <button class="btn-danger-g" onclick="return confirm('Hapus game ini?')">🗑️ Hapus Game</button>
+            </form>
+            <a href="/admin/games" class="btn-ghost">← Kelola Game</a>
+          </div>
+
+        <!-- USER CONTROLS -->
+        <% } else if (user) { %>
+          <div class="action-row">
+            <% if (alreadyBought) { %>
+              <span class="owned-badge">✅ Sudah Dimiliki</span>
+            <% } else { %>
+              <form method="POST" action="/games/<%= game.id %>/buy" style="display:inline">
+                <button class="btn-cyan" style="font-size:1rem;padding:.7rem 1.6rem" onclick="return confirm('Beli game ini?')">
+                  🛒 Beli Sekarang
+                </button>
+              </form>
+            <% } %>
+            <a href="/wallet" class="btn-ghost">💰 Top Up Saldo</a>
+          </div>
+
+        <!-- GUEST -->
+        <% } else { %>
+          <div class="action-row">
+            <a href="/login" class="btn-cyan" style="font-size:1rem;padding:.7rem 1.6rem">Login untuk Membeli</a>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOWER SECTION -->
+<div class="detail-lower">
+  <div class="container">
+
+    <!-- FORM RATING -->
+    <% if (user?.role !== 'admin' && alreadyBought) { %>
+      <div class="review-form-box">
+        <div class="review-form-title">⭐ Beri Rating & Review</div>
+        <form method="POST" action="/games/<%= game.id %>/rate">
+          <div style="display:grid;grid-template-columns:140px 1fr;gap:1rem;margin-bottom:1rem;align-items:start">
+            <div>
+              <label class="g-label">Rating</label>
+              <select name="rating" class="g-input g-select">
+                <% for(let i=1; i<=5; i++) { %>
+                  <option value="<%= i %>" <%= userReview?.rating===i?'selected':'' %>>
+                    <%= '★'.repeat(i) + '☆'.repeat(5-i) %> (<%= i %>)
+                  </option>
+                <% } %>
+              </select>
+            </div>
+            <div>
+              <label class="g-label">Review (opsional)</label>
+              <textarea name="review" class="g-input" rows="3"
+                placeholder="Bagikan pengalamanmu..."><%= userReview?.review || '' %></textarea>
+            </div>
+          </div>
+          <button type="submit" class="btn-yellow" style="background:var(--yellow);color:#000;font-weight:700;border:none;border-radius:8px;padding:.55rem 1.4rem;cursor:pointer">Simpan Rating</button>
+        </form>
+      </div>
+    <% } %>
+
+    <!-- REVIEWS -->
+    <% if (reviews.length > 0) { %>
+      <div class="section-label">💬 Ulasan Pengguna (<%= reviews.length %>)</div>
+      <div class="review-list">
+        <% reviews.forEach(r => { %>
+          <% if (r.rating) { %>
+            <div class="review-card">
+              <span class="review-user">👤 <%= r.User?.username || 'Anonim' %></span>
+              <span style="color:var(--yellow)"><%= '★'.repeat(r.rating) + '☆'.repeat(5-r.rating) %></span>
+              <% if (r.review) { %><p class="review-text"><%= r.review %></p><% } %>
+            </div>
+          <% } %>
+        <% }) %>
+      </div>
+    <% } %>
+
+  </div>
+</div>
+</body>
+</html>

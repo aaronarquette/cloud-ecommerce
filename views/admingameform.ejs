@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="id">
+<head><meta charset="UTF-8"><title><%= locals.game ? 'Edit' : 'Tambah' %> Game — CloudGG</title></head>
+<body>
+<%- include('navbar') %>
+<style>
+.admin-header { background:var(--bg2); border-bottom:1px solid var(--border); padding:1.75rem 0; }
+.admin-header-inner { display:flex; align-items:center; justify-content:space-between; }
+.admin-title { font-family:var(--font-head); font-size:1.4rem; font-weight:700; }
+.form-page { padding:2.5rem 0; }
+.form-box { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:2rem; max-width:640px; }
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+@media (max-width: 500px) {
+  .form-grid { grid-template-columns: 1fr; }
+}
+.form-group { margin-bottom:1.1rem; }
+.form-footer { display:flex; gap:.75rem; margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid var(--border); }
+.img-preview { width:100%; height:160px; object-fit:cover; border-radius:8px; border:1px solid var(--border); margin-top:.5rem; display:none; }
+</style>
+
+<div class="admin-header">
+  <div class="container admin-header-inner">
+    <div>
+      <div style="font-size:.75rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;font-family:var(--font-head);margin-bottom:.3rem">Admin / Game</div>
+      <div class="admin-title"><%= locals.game ? '✏️ Edit Game' : '➕ Tambah Game Baru' %></div>
+    </div>
+    <a href="/admin/games" class="btn-ghost">← Kembali</a>
+  </div>
+</div>
+
+<div class="form-page">
+  <div class="container">
+    <div class="form-box">
+
+      <% if (locals.error) { %>
+        <div class="g-alert alert-err"><%= locals.error %></div>
+      <% } %>
+
+      <form method="POST" action="<%= locals.game ? '/admin/games/' + locals.game.id + '/edit' : '/admin/games' %>">
+
+        <div class="form-group">
+          <label class="g-label">Judul Game</label>
+          <input type="text" name="title" class="g-input"
+            value="<%= locals.game ? locals.game.title : '' %>"
+            placeholder="Nama game..." required>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="g-label">Harga (Rp)</label>
+            <input type="number" name="price" class="g-input"
+              value="<%= locals.game ? locals.game.price : '' %>"
+              placeholder="0" min="0" required>
+          </div>
+          <div class="form-group">
+            <label class="g-label">Genre</label>
+            <select name="GenreId" class="g-input g-select" required>
+              <option value="">-- Pilih Genre --</option>
+              <% genres.forEach(function(g) { %>
+                <option value="<%= g.id %>" <%= (locals.game && locals.game.GenreId === g.id) ? 'selected' : '' %>><%= g.title %></option>
+              <% }) %>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="g-label">Deskripsi</label>
+          <textarea name="description" class="g-input" rows="3"
+            placeholder="Deskripsi singkat game..." required><%= locals.game ? locals.game.description : '' %></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="g-label">URL Gambar</label>
+          <input type="text" name="imageUrl" class="g-input" id="imgUrl"
+            value="<%= locals.game ? locals.game.imageUrl : '' %>"
+            placeholder="https://..." required oninput="previewImg(this.value)">
+          <% var currentImg = locals.game ? locals.game.imageUrl : ''; %>
+          <img id="imgPreview" class="img-preview"
+            src="<%= currentImg %>"
+            alt="Preview"
+            style="<%= currentImg ? 'display:block' : 'display:none' %>">
+        </div>
+
+        <div class="form-footer">
+          <button type="submit" class="<%= locals.game ? 'btn-warning-g' : 'btn-cyan' %>" style="padding:.65rem 1.6rem;font-size:.95rem">
+            <%= locals.game ? '💾 Simpan Perubahan' : '➕ Tambah Game' %>
+          </button>
+          <a href="/admin/games" class="btn-ghost">Batal</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+function previewImg(url) {
+  var img = document.getElementById('imgPreview');
+  if (url) { img.src = url; img.style.display = 'block'; }
+  else { img.style.display = 'none'; }
+}
+</script>
+</body></html>

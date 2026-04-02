@@ -1,0 +1,12 @@
+[
+  { "id": 1, "title": "RPG" },
+  { "id": 2, "title": "Action RPG" },
+  { "id": 3, "title": "Racing" },
+  { "id": 4, "title": "Metroidvania" },
+  { "id": 5, "title": "Simulation" },
+  { "id": 6, "title": "Roguelike" },
+  { "id": 7, "title": "Action Adventure" },
+  { "id": 8, "title": "RPG" },
+  { "id": 9, "title": "Sandbox" },
+  { "id": 10, "title": "Open World Action" }
+]

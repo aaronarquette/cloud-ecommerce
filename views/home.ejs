@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>CloudGG — Toko Game</title>
+</head>
+<body>
+<%- include('navbar') %>
+
+<style>
+/* ── HERO ── */
+.hero {
+  position: relative;
+  padding: 4rem 0 3rem;
+  overflow: hidden;
+}
+.hero::before {
+  content:'';
+  position:absolute; inset:0;
+  background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(139,92,246,.25), transparent),
+              radial-gradient(ellipse 60% 40% at 80% 50%, rgba(0,212,255,.15), transparent);
+  pointer-events:none;
+}
+.hero-inner { position:relative; }
+.hero h1 {
+  font-family: var(--font-head);
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: 2px;
+}
+.hero h1 .accent-cyan { color: var(--cyan); text-shadow:0 0 30px rgba(0,212,255,.5); }
+.hero h1 .accent-purple { color: var(--purple); }
+.hero p { color: var(--muted); margin-top:.75rem; font-size:1.05rem; }
+
+/* ── SEARCH BAR ── */
+.search-bar {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  gap: .75rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+.search-bar input { flex:1; min-width:200px; }
+.search-bar select { width:180px; }
+
+/* ── GAME GRID ── */
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.25rem;
+  margin-top: 2rem;
+}
+.game-card { position:relative; }
+.game-card-img { width:100%; height:150px; object-fit:cover; display:block; }
+.game-card-body { padding: 1rem; }
+.game-card-title { font-weight:700; font-size:.95rem; margin-bottom:.35rem; }
+.game-card-price { font-size:1.05rem; font-weight:700; color:var(--yellow); margin:.5rem 0 .75rem; }
+.game-card-actions { display:flex; flex-direction:column; gap:.4rem; }
+.admin-row { display:flex; gap:.4rem; margin-top:.35rem; }
+.admin-row form, .admin-row a { flex:1; }
+.admin-row button { width:100%; }
+
+/* ── EMPTY STATE ── */
+.empty-state { text-align:center; padding:4rem 1rem; color:var(--muted); }
+.empty-state .icon { font-size:3rem; margin-bottom:1rem; opacity:.4; }
+
+/* ── GENRE PILLS ── */
+.genre-pills { display:flex; gap:.5rem; flex-wrap:wrap; margin-bottom:1.5rem; }
+.genre-pill {
+  padding:.3rem .85rem;
+  border-radius:20px;
+  font-size:.8rem;
+  font-weight:600;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  cursor:pointer;
+  text-decoration:none;
+  transition:all .2s;
+}
+.genre-pill:hover, .genre-pill.active { border-color:var(--cyan); color:var(--cyan); background:rgba(0,212,255,.08); }
+</style>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="container hero-inner">
+    <h1>Temukan Game<br><span class="accent-cyan">Favoritmu</span> di <span class="accent-purple">CloudGG</span></h1>
+    <p>Ribuan judul game tersedia. Beli, mainkan, nikmati.</p>
+
+    <!-- Search & Filter -->
+    <form method="GET" action="/" class="search-bar">
+      <input type="text" name="search" class="g-input" style="flex:1;min-width:200px"
+        placeholder="🔍  Cari game..." value="<%= search %>">
+      <select name="genre" class="g-input g-select" style="width:180px">
+        <option value="">Semua Genre</option>
+        <% genres.forEach(g => { %>
+          <option value="<%= g.id %>" <%= currentGenre == g.id ? 'selected' : '' %>><%= g.title %></option>
+        <% }) %>
+      </select>
+      <button type="submit" class="btn-cyan">Filter</button>
+      <% if (user?.role === 'admin') { %>
+        <a href="/admin/games/add" class="btn-green-g">➕ Tambah</a>
+      <% } %>
+    </form>
+  </div>
+</div>
+
+<!-- CATALOG -->
+<div class="section">
+  <div class="container">
+
+    <!-- Genre Pills -->
+    <div class="genre-pills">
+      <a href="/" class="genre-pill <%= !currentGenre ? 'active' : '' %>">Semua</a>
+      <% genres.forEach(g => { %>
+        <a href="/?genre=<%= g.id %>" class="genre-pill <%= currentGenre == g.id ? 'active' : '' %>"><%= g.title %></a>
+      <% }) %>
+    </div>
+
+    <% if (games.length === 0) { %>
+      <div class="empty-state">
+        <div class="icon">🎮</div>
+        <p>Tidak ada game yang ditemukan.</p>
+      </div>
+    <% } else { %>
+      <div class="games-grid">
+        <% games.forEach(game => { %>
+          <div class="g-card game-card">
+            <img src="<%= game.imageUrl %>" class="game-card-img" alt="<%= game.title %>"
+              onerror="this.src='https://placehold.co/400x200/12121f/444?text=No+Image'">
+            <div class="game-card-body">
+              <div class="game-card-title"><%= game.title %></div>
+              <span class="g-badge badge-cyan"><%= game.Genre?.title || 'Unknown' %></span>
+              <div class="game-card-price">Rp <%= game.price.toLocaleString('id-ID') %></div>
+              <div class="game-card-actions">
+                <a href="/games/<%= game.id %>" class="btn-purple btn-full">Lihat Detail →</a>
+                <% if (user?.role === 'admin') { %>
+                  <div class="admin-row">
+                    <a href="/admin/games/<%= game.id %>/edit" class="btn-warning-g btn-sm-g" style="text-align:center">✏️ Edit</a>
+                    <form method="POST" action="/admin/games/<%= game.id %>/delete">
+                      <button class="btn-danger-g btn-sm-g" onclick="return confirm('Hapus game ini?')">🗑️ Hapus</button>
+                    </form>
+                  </div>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
